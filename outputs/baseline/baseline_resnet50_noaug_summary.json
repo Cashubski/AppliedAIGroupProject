@@ -1,0 +1,179 @@
+{
+  "experiment": "baseline_resnet50_noaug",
+  "device": "cuda",
+  "best_epoch": 29,
+  "best_val_metric": 0.9044058205335489,
+  "primary_metric": "quadratic_kappa",
+  "val": {
+    "accuracy": 0.8604651162790697,
+    "balanced_accuracy": 0.7374121656418605,
+    "macro_f1": 0.7627920777390402,
+    "weighted_f1": 0.8576133852467641,
+    "quadratic_kappa": 0.9044058205335489,
+    "macro_auroc": 0.9565478696587466,
+    "per_class_precision": [
+      0.9180327868852459,
+      0.8382352941176471,
+      0.8709677419354839,
+      0.625,
+      0.75
+    ],
+    "per_class_recall": [
+      0.9180327868852459,
+      0.9193548387096774,
+      0.7941176470588235,
+      0.5555555555555556,
+      0.5
+    ],
+    "per_class_f1": [
+      0.9180327868852459,
+      0.8769230769230769,
+      0.8307692307692308,
+      0.5882352941176471,
+      0.6
+    ],
+    "per_class_support": [
+      61,
+      62,
+      34,
+      9,
+      6
+    ],
+    "confusion_matrix": [
+      [
+        56,
+        5,
+        0,
+        0,
+        0
+      ],
+      [
+        5,
+        57,
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        5,
+        27,
+        2,
+        0
+      ],
+      [
+        0,
+        1,
+        2,
+        5,
+        1
+      ],
+      [
+        0,
+        0,
+        2,
+        1,
+        3
+      ]
+    ]
+  },
+  "test": {
+    "accuracy": 0.7217741935483871,
+    "balanced_accuracy": 0.6242948717948718,
+    "macro_f1": 0.6654413472706155,
+    "weighted_f1": 0.7222796307744185,
+    "quadratic_kappa": 0.7947761194029851,
+    "macro_auroc": 0.8866765835259658,
+    "per_class_precision": [
+      0.7738095238095238,
+      0.5882352941176471,
+      0.9148936170212766,
+      0.625,
+      0.8571428571428571
+    ],
+    "per_class_recall": [
+      0.8125,
+      0.7692307692307693,
+      0.6615384615384615,
+      0.4166666666666667,
+      0.46153846153846156
+    ],
+    "per_class_f1": [
+      0.7926829268292683,
+      0.6666666666666666,
+      0.7678571428571429,
+      0.5,
+      0.6
+    ],
+    "per_class_support": [
+      80,
+      78,
+      65,
+      12,
+      13
+    ],
+    "confusion_matrix": [
+      [
+        65,
+        15,
+        0,
+        0,
+        0
+      ],
+      [
+        18,
+        60,
+        0,
+        0,
+        0
+      ],
+      [
+        1,
+        21,
+        43,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
+        4,
+        5,
+        1
+      ],
+      [
+        0,
+        4,
+        0,
+        3,
+        6
+      ]
+    ]
+  },
+  "config": {
+    "seed": 42,
+    "image_size": 224,
+    "val_split": 0.15,
+    "num_workers": 8,
+    "batch_size": 128,
+    "train_fraction": 1.0,
+    "augmentation": false,
+    "backbone": "resnet50",
+    "pretrained": true,
+    "dropout": 0.3,
+    "epochs": 30,
+    "head_lr": 0.001,
+    "backbone_lr": 0.0001,
+    "weight_decay": 0.0001,
+    "scheduler": "cosine",
+    "warmup_epochs": 1,
+    "label_smoothing": 0.0,
+    "grad_clip": 1.0,
+    "use_amp": true,
+    "early_stop_patience": 7,
+    "primary_metric": "quadratic_kappa",
+    "checkpoint_dir": "/home/michal/GroupProjectAIMedIM/checkpoints/baseline",
+    "output_dir": "/home/michal/GroupProjectAIMedIM/outputs/baseline",
+    "experiment_name": "baseline_resnet50_noaug"
+  }
+}
