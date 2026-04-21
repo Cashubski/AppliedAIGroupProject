@@ -1,7 +1,12 @@
 Training/
 Testing/
 checkpoints/
+data/
+assets/
+artefacts/
+
 __pycache__/
 *.pyc
 .DS_Store
 *.code-workspace
+.venv/
