@@ -1,0 +1,6 @@
+class,support,precision,recall,f1
+0: No macular lesions,61,0.9365,0.9672,0.9516
+1: Tessellated fundus,62,0.9016,0.8871,0.8943
+2: Diffuse atrophy,34,0.8788,0.8529,0.8657
+3: Patchy atrophy,9,0.6,0.6667,0.6316
+4: Macular atrophy,6,0.8,0.6667,0.7273

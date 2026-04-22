@@ -1,0 +1,7 @@
+experiment,kappa,kappa_baseline,delta,ci_low,ci_high,p_value,significant_at_5pct
+"Baseline (224, aug on, 100 %)",0.7207,0.7207,0.0,,,,
+"Baseline (224, aug on, 100 %)",0.7207,0.7207,0.0,0.0,0.0,1.0,False
+Image size 384,0.8546,0.7207,0.1339,0.0709,0.2045,0.0,True
+"Weighted Cross Entropy, Label Smoothing=0.1",0.8379,0.7207,0.1173,0.0559,0.1872,0.0,True
+Max Pooling + Avrg Pooling,0.7207,0.7207,0.0,0.0,0.0,1.0,False
+All imbalances strategies combined,0.8512,0.7207,0.1306,0.0638,0.2021,0.0,True
