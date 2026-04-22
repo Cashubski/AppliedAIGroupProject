@@ -1,0 +1,185 @@
+{
+  "experiment": "bias_fairness_loss_balanced_sampler_lamba_0.2_total",
+  "device": "cuda",
+  "best_epoch": 16,
+  "best_val_metric": 0.9351534763894561,
+  "primary_metric": "quadratic_kappa",
+  "val": {
+    "accuracy": 0.8604651162790697,
+    "balanced_accuracy": 0.7977858656242331,
+    "macro_f1": 0.8042259155728407,
+    "weighted_f1": 0.8583484340906264,
+    "quadratic_kappa": 0.9351534763894561,
+    "macro_auroc": 0.938698893603464,
+    "per_class_precision": [
+      0.8805970149253731,
+      0.8813559322033898,
+      0.84375,
+      0.625,
+      0.8333333333333334
+    ],
+    "per_class_recall": [
+      0.9672131147540983,
+      0.8387096774193549,
+      0.7941176470588235,
+      0.5555555555555556,
+      0.8333333333333334
+    ],
+    "per_class_f1": [
+      0.921875,
+      0.859504132231405,
+      0.8181818181818182,
+      0.5882352941176471,
+      0.8333333333333334
+    ],
+    "per_class_support": [
+      61,
+      62,
+      34,
+      9,
+      6
+    ],
+    "confusion_matrix": [
+      [
+        59,
+        2,
+        0,
+        0,
+        0
+      ],
+      [
+        8,
+        52,
+        2,
+        0,
+        0
+      ],
+      [
+        0,
+        5,
+        27,
+        2,
+        0
+      ],
+      [
+        0,
+        0,
+        3,
+        5,
+        1
+      ],
+      [
+        0,
+        0,
+        0,
+        1,
+        5
+      ]
+    ]
+  },
+  "test": {
+    "accuracy": 0.6975806451612904,
+    "balanced_accuracy": 0.5954487179487179,
+    "macro_f1": 0.6265693645879404,
+    "weighted_f1": 0.6952863063731435,
+    "quadratic_kappa": 0.7886197977897954,
+    "macro_auroc": 0.8869121944993783,
+    "per_class_precision": [
+      0.7444444444444445,
+      0.5806451612903226,
+      0.8571428571428571,
+      0.5555555555555556,
+      0.7142857142857143
+    ],
+    "per_class_recall": [
+      0.8375,
+      0.6923076923076923,
+      0.6461538461538462,
+      0.4166666666666667,
+      0.38461538461538464
+    ],
+    "per_class_f1": [
+      0.788235294117647,
+      0.631578947368421,
+      0.7368421052631579,
+      0.47619047619047616,
+      0.5
+    ],
+    "per_class_support": [
+      80,
+      78,
+      65,
+      12,
+      13
+    ],
+    "confusion_matrix": [
+      [
+        67,
+        13,
+        0,
+        0,
+        0
+      ],
+      [
+        22,
+        54,
+        2,
+        0,
+        0
+      ],
+      [
+        1,
+        21,
+        42,
+        1,
+        0
+      ],
+      [
+        0,
+        1,
+        4,
+        5,
+        2
+      ],
+      [
+        0,
+        4,
+        1,
+        3,
+        5
+      ]
+    ]
+  },
+  "config": {
+    "seed": 42,
+    "image_size": 224,
+    "val_split": 0.15,
+    "num_workers": 8,
+    "batch_size": 128,
+    "train_fraction": 1.0,
+    "augmentation": true,
+    "return_metadata": true,
+    "balanced_sampler": true,
+    "backbone": "resnet50",
+    "pretrained": true,
+    "dropout": 0.3,
+    "add_max_pooling": false,
+    "num_meta_features": 0,
+    "epochs": 30,
+    "head_lr": 0.001,
+    "backbone_lr": 0.0001,
+    "weight_decay": 0.0001,
+    "scheduler": "cosine",
+    "warmup_epochs": 1,
+    "label_smoothing": 0.0,
+    "weighted_ce": false,
+    "use_bias_loss": true,
+    "grad_clip": 1.0,
+    "use_amp": true,
+    "early_stop_patience": 7,
+    "primary_metric": "quadratic_kappa",
+    "checkpoint_dir": "/home/dudu/ucl/applied_ai/cw2/AppliedAIGroupProject/checkpoints/baseline",
+    "output_dir": "/home/dudu/ucl/applied_ai/cw2/AppliedAIGroupProject/outputs/baseline",
+    "experiment_name": "bias_fairness_loss_balanced_sampler_lamba_0.2_total"
+  }
+}

@@ -1,0 +1,6 @@
+experiment,kappa,kappa_baseline,delta,ci_low,ci_high,p_value,significant_at_5pct
+"Baseline (224, aug on, 100 %)",0.7696,0.7696,0.0,,,,
+"Baseline (224, aug on, 100 %)",0.7696,0.7696,0.0,0.0,0.0,1.0,False
+bias_fairness_loss_lamba_0.2_total,0.7497,0.7696,-0.0199,-0.0604,0.0155,0.308,False
+bias_fairness_loss_balanced_sampler_lamba_0.2_total,0.7886,0.7696,0.019,-0.0282,0.0756,0.518,False
+bias_loss_multimodal_balanced_0.2_total,0.7314,0.7696,-0.0382,-0.081,0.0052,0.084,False

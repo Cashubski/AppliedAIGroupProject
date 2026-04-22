@@ -1,0 +1,7 @@
+metric,point,ci_low,ci_high,std
+accuracy,0.629,0.5726,0.6895,0.0297
+balanced_accuracy,0.4946,0.4228,0.5733,0.0391
+macro_f1,0.5103,0.4246,0.5936,0.0443
+weighted_f1,0.6225,0.5657,0.6818,0.0303
+quadratic_kappa,0.7314,0.6584,0.7923,0.0354
+macro_auroc,0.8908,0.8561,0.9222,0.0171
