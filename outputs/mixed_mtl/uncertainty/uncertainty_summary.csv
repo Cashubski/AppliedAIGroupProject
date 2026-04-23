@@ -1,0 +1,3 @@
+name,accuracy,balanced_accuracy,macro_f1,quadratic_kappa,macro_auroc,nll,brier,ece,mce,aurc,risk@80,risk@90,error_auroc
+mixed_mcd,0.7702,0.6744,0.7027,0.8327,0.9196,0.769,0.3742,0.1278,0.3288,0.2089,0.2323,0.2332,0.5171
+mixed_temp,0.7742,0.6775,0.7054,0.8347,0.9129,0.7657,0.3548,0.077,0.3967,0.1123,0.1717,0.2018,0.7218
