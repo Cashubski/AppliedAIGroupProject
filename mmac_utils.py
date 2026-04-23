@@ -35,36 +35,44 @@ from torchvision.models import ResNet50_Weights
 # paths + constants
 PROJECT_ROOT: Path = Path.cwd()
 DATA_ROOT: Path = PROJECT_ROOT / "data"
+# training split
 TRAIN_DIR: Path = DATA_ROOT / "Training" / "Training_Images"
 TRAIN_CSV: Path = DATA_ROOT / "Training" / "Training_LabelsDemographic.csv"
+# testing split
 TEST_DIR: Path = DATA_ROOT / "Testing" / "Testing_Images"
 TEST_CSV: Path = DATA_ROOT / "Testing" / "Testing_LabelDemographic.csv"
+# where weights + outputs land
 CHECKPOINT_DIR: Path = PROJECT_ROOT / "checkpoints"
-OUTPUT_DIR: Path = PROJECT_ROOT / "outputs" 
+OUTPUT_DIR: Path = PROJECT_ROOT / "outputs"
 ARTEFACT_DIR: Path = PROJECT_ROOT / "artefacts"
 BASELINE_OUTPUT_DIR: Path = OUTPUT_DIR / "baseline"
 BASELINE_CKPT: Path = CHECKPOINT_DIR / "baseline_resnet50_best.pt"
 
+# META-PM grades (5 classes)
 NUM_CLASSES: int = 5
 CLASS_NAMES: Tuple[str, ...] = (
     "0: No macular lesions", "1: Tessellated fundus", "2: Diffuse atrophy",
     "3: Patchy atrophy", "4: Macular atrophy",
 )
+# CSV column names
 LABEL_COL: str = "myopic_maculopathy_grade"
 IMAGE_COL: str = "image"
+# ImageNet normalisation stats
 IMAGENET_MEAN: Tuple[float, float, float] = (0.485, 0.456, 0.406)
 IMAGENET_STD: Tuple[float, float, float] = (0.229, 0.224, 0.225)
 
+# scalar metrics tracked by bootstrap
 _SCALAR_METRICS: Tuple[str, ...] = (
     "accuracy", "balanced_accuracy", "macro_f1", "weighted_f1",
     "quadratic_kappa", "macro_auroc",
 )
 
+# plotting defaults
 sns.set_theme(style="whitegrid")
 plt.rcParams["figure.dpi"] = 110
 
 
-# helpers 
+# helpers
 def get_device() -> torch.device:
     if torch.cuda.is_available():
         return torch.device("cuda")
@@ -83,7 +91,7 @@ def set_seed(seed: int) -> None:
 def enable_cuda_optimizations() -> None:
     if not torch.cuda.is_available():
         return
-    torch.backends.cudnn.benchmark = True
+    torch.backends.cudnn.benchmark = True # pick fastest conv algo
     torch.backends.cuda.matmul.allow_tf32 = True
     torch.backends.cudnn.allow_tf32 = True
 
@@ -94,8 +102,9 @@ def unwrap_model(model: nn.Module) -> nn.Module:
 
 # transforms + data
 def build_train_transform(image_size: int = 224) -> transforms.Compose:
+    # standard aug pipeline used for training
     return transforms.Compose([
-        transforms.Resize(int(image_size * 1.15)),
+        transforms.Resize(int(image_size * 1.15)), # slight upsample before crop
         transforms.RandomResizedCrop(image_size, scale=(0.85, 1.0), ratio=(0.95, 1.05)),
         transforms.RandomHorizontalFlip(p=0.5),
         transforms.RandomRotation(degrees=10),
@@ -106,6 +115,7 @@ def build_train_transform(image_size: int = 224) -> transforms.Compose:
 
 
 def build_eval_transform(image_size: int = 224) -> transforms.Compose:
+    # deterministic transform for val / test
     return transforms.Compose([
         transforms.Resize(int(image_size * 1.15)),
         transforms.CenterCrop(image_size),
@@ -116,7 +126,7 @@ def build_eval_transform(image_size: int = 224) -> transforms.Compose:
 
 def load_label_frame(csv_path: Path, image_dir: Path) -> pd.DataFrame:
     frame = pd.read_csv(csv_path)
-    # drop rows whose image file is missing on disk
+    # drop rows whose image file is missing
     exists = frame[IMAGE_COL].apply(lambda n: (Path(image_dir) / n).is_file())
     if (~exists).any():
         print(f"[data] dropping {(~exists).sum()} missing rows in {image_dir}")
@@ -125,6 +135,7 @@ def load_label_frame(csv_path: Path, image_dir: Path) -> pd.DataFrame:
 
 
 def stratified_split(frame: pd.DataFrame, val_fraction: float, seed: int):
+    # class-stratified train / val split
     tr, va = train_test_split(
         np.arange(len(frame)), test_size=val_fraction,
         random_state=seed, shuffle=True, stratify=frame[LABEL_COL].values,
@@ -140,6 +151,7 @@ class MMACClassificationDataset(Dataset):
     transform: Optional[transforms.Compose] = None
 
     def __post_init__(self) -> None:
+        # tidy index + coerce path
         self.frame = self.frame.reset_index(drop=True)
         self.image_dir = Path(self.image_dir)
 
@@ -148,6 +160,7 @@ class MMACClassificationDataset(Dataset):
 
     def __getitem__(self, idx: int):
         row = self.frame.iloc[idx]
+        # force 3-channel RGB
         image = Image.open(self.image_dir / row[IMAGE_COL]).convert("RGB")
         if self.transform is not None:
             image = self.transform(image)
@@ -156,21 +169,26 @@ class MMACClassificationDataset(Dataset):
 
 def build_dataloaders(image_size: int, batch_size: int, num_workers: int,
                       val_split: float, seed: int) -> Dict[str, Any]:
+    # load csvs and split train into train/val
     tr_frame = load_label_frame(TRAIN_CSV, TRAIN_DIR)
     te_frame = load_label_frame(TEST_CSV, TEST_DIR)
     tr_frame, va_frame = stratified_split(tr_frame, val_split, seed)
+    # aug for train, deterministic for eval
     tr_tfm, ev_tfm = build_train_transform(image_size), build_eval_transform(image_size)
     ds = {
         "train": MMACClassificationDataset(tr_frame, TRAIN_DIR, tr_tfm),
         "val":   MMACClassificationDataset(va_frame, TRAIN_DIR, ev_tfm),
         "test":  MMACClassificationDataset(te_frame, TEST_DIR,  ev_tfm),
     }
+    # shared dataloader options
     common = dict(batch_size=batch_size, num_workers=num_workers,
                   pin_memory=True, persistent_workers=num_workers > 0)
     return {
+        # only train shuffles + drops last partial batch
         "train": DataLoader(ds["train"], shuffle=True,  drop_last=True,  **common),
         "val":   DataLoader(ds["val"],   shuffle=False, drop_last=False, **common),
         "test":  DataLoader(ds["test"],  shuffle=False, drop_last=False, **common),
+        # also return raw datasets for downstream use
         "train_ds": ds["train"], "val_ds": ds["val"], "test_ds": ds["test"],
     }
 
@@ -191,9 +209,11 @@ class MetricBundle:
     confusion_matrix: List[List[int]] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
+        # shallow copy so callers can mutate freely
         return self.__dict__.copy()
 
     def pretty(self) -> str:
+        # compact one-line summary for logs
         a = f"{self.macro_auroc:.4f}" if (self.macro_auroc is not None
                                           and np.isfinite(self.macro_auroc)) else "  n/a"
         return (f"acc={self.accuracy:.4f}  bal_acc={self.balanced_accuracy:.4f}  "
@@ -202,19 +222,22 @@ class MetricBundle:
 
 def compute_metrics(y_true, y_pred, y_prob=None,
                     num_classes: int = NUM_CLASSES) -> MetricBundle:
+    # full classification metric bundle, optional AUROC if probs supplied
     y_true = np.asarray(y_true).astype(int)
     y_pred = np.asarray(y_pred).astype(int)
     labels = list(range(num_classes))
+    # per-class scores
     prec, rec, f1c, sup = precision_recall_fscore_support(
         y_true, y_pred, labels=labels, zero_division=0)
     auroc = None
+    # need at least 2 classes present for AUROC
     if y_prob is not None and len(np.unique(y_true)) >= 2:
         try:
             auroc = roc_auc_score(y_true, np.asarray(y_prob), multi_class="ovr",
                                   average="macro", labels=labels)
-            if not np.isfinite(auroc): auroc = None
+            if not np.isfinite(auroc): auroc = None # guard nan / inf
         except ValueError:
-            auroc = None
+            auroc = None # e.g. a class missing in y_true
     cm = confusion_matrix(y_true, y_pred, labels=labels)
     return MetricBundle(
         accuracy=float(accuracy_score(y_true, y_pred)),
@@ -244,30 +267,35 @@ def _stratified_bootstrap_index(y_true: np.ndarray, rng: np.random.Generator) ->
 
 def bootstrap_metrics(y_true, y_pred, y_prob=None, *, num_classes=NUM_CLASSES,
                       n_resamples=1000, ci_level=0.95, seed=42):
+    # stratified bootstrap CIs around the scalar metrics
     y_true = np.asarray(y_true).astype(int)
     y_pred = np.asarray(y_pred).astype(int)
     if y_prob is not None: y_prob = np.asarray(y_prob)
+    # point estimate on the unresampled data
     point = compute_metrics(y_true, y_pred, y_prob, num_classes=num_classes).to_dict()
     samples: Dict[str, List[float]] = {m: [] for m in _SCALAR_METRICS}
     rng = np.random.default_rng(seed)
     for _ in range(n_resamples):
         idx = _stratified_bootstrap_index(y_true, rng)
+        # recompute metrics on the resampled indices
         b = compute_metrics(y_true[idx], y_pred[idx],
                             y_prob[idx] if y_prob is not None else None,
                             num_classes=num_classes)
         for m in _SCALAR_METRICS:
             v = getattr(b, m)
             if v is not None and np.isfinite(v):
-                samples[m].append(float(v))
-    a = (1.0 - ci_level) / 2.0
+                samples[m].append(float(v)) # skip nans
+    a = (1.0 - ci_level) / 2.0 # lower tail probability
     results: Dict[str, Dict[str, float]] = {}
     for m in _SCALAR_METRICS:
         arr = np.asarray(samples[m], dtype=float)
         pv = point.get(m); pv = float(pv) if pv is not None else float("nan")
         if arr.size == 0:
+            # no valid resamples, return nans
             results[m] = {"point": pv, "ci_low": float("nan"),
                           "ci_high": float("nan"), "std": float("nan")}
         else:
+            # percentile CI
             lo, hi = np.quantile(arr, [a, 1.0 - a])
             results[m] = {"point": pv, "ci_low": float(lo), "ci_high": float(hi),
                           "std": float(arr.std(ddof=1)) if arr.size > 1 else 0.0}
@@ -284,29 +312,36 @@ def paired_bootstrap_compare(y_true, y_pred_a, y_pred_b, y_prob_a=None, y_prob_b
     if y_prob_b is not None: y_prob_b = np.asarray(y_prob_b)
 
     def _scalar(y, p, q):
+        # pull a single metric value, nan if missing / non-finite
         v = getattr(compute_metrics(y, p, q, num_classes=num_classes), metric)
         return float(v) if v is not None and np.isfinite(v) else np.nan
 
+    # point estimates on the full data
     ma = _scalar(y_true, y_pred_a, y_prob_a)
     mb = _scalar(y_true, y_pred_b, y_prob_b)
     delta = ma - mb
     rng = np.random.default_rng(seed)
     deltas: List[float] = []
+
     for _ in range(n_resamples):
+        # same indices for A and B => paired
         idx = _stratified_bootstrap_index(y_true, rng)
         va = _scalar(y_true[idx], y_pred_a[idx], y_prob_a[idx] if y_prob_a is not None else None)
         vb = _scalar(y_true[idx], y_pred_b[idx], y_prob_b[idx] if y_prob_b is not None else None)
         if np.isfinite(va) and np.isfinite(vb):
             deltas.append(va - vb)
+
     arr = np.asarray(deltas, dtype=float)
     a = (1.0 - ci_level) / 2.0
     lo, hi = np.quantile(arr, [a, 1.0 - a]) if arr.size else (np.nan, np.nan)
+
     # two-sided p-value via proportion of resamples on the wrong side of zero
     if arr.size == 0 or not np.isfinite(delta):
         p = float("nan")
     else:
+        # tail on the opposite side of the observed delta
         tail = (arr <= 0).mean() if delta >= 0 else (arr >= 0).mean()
-        p = min(1.0, 2.0 * float(tail))
+        p = min(1.0, 2.0 * float(tail)) # two-sided, clipped at 1
     return {"metric_a": ma, "metric_b": mb, "delta": delta,
             "ci_low": float(lo), "ci_high": float(hi), "p_value": p,
             "n_resamples": int(arr.size)}
@@ -319,7 +354,7 @@ def format_ci(ci: Dict[str, float], digits: int = 4) -> str:
     return f"{p:.{digits}f}  [{lo:.{digits}f}, {hi:.{digits}f}]"
 
 
-# checkpoints + history 
+# checkpoints + history
 def _json_default(obj: Any) -> Any:
     if isinstance(obj, (np.floating, np.integer)): return obj.item()
     if isinstance(obj, np.ndarray): return obj.tolist()
@@ -329,6 +364,7 @@ def _json_default(obj: Any) -> Any:
 
 def save_checkpoint(path: Path, *, model: nn.Module, optimizer=None, scheduler=None,
                     epoch: int, metrics=None, extra=None) -> None:
+    # write model + optim + scheduler states into a single .pt
     path = Path(path); path.parent.mkdir(parents=True, exist_ok=True)
     payload: Dict[str, Any] = {"epoch": int(epoch),
                                "model_state": unwrap_model(model).state_dict(),
@@ -341,6 +377,7 @@ def save_checkpoint(path: Path, *, model: nn.Module, optimizer=None, scheduler=N
 
 def load_checkpoint(path: Path, *, model=None, optimizer=None, scheduler=None,
                     map_location: Optional[str] = "cpu") -> Dict[str, Any]:
+    # restore whichever components passed in
     payload = torch.load(path, map_location=map_location)
     if model is not None and "model_state" in payload:
         unwrap_model(model).load_state_dict(payload["model_state"])
@@ -358,10 +395,11 @@ class TrainingHistory:
     train_metrics: List[Dict[str, Any]] = field(default_factory=list)
     val_metrics: List[Dict[str, Any]] = field(default_factory=list)
     learning_rates: List[List[float]] = field(default_factory=list)
-    # per-epoch recording (aux losses, kl weight, log_vars...)
+    # per-epoch recording (aux losses, kl weight, log_vars)
     extra: List[Dict[str, Any]] = field(default_factory=list)
 
     def append(self, **kw) -> None:
+        # push one epoch's values onto the matching list fields
         for k, v in kw.items():
             getattr(self, k).append(v)
 
@@ -378,10 +416,12 @@ class MMACResNet50(nn.Module):
     def __init__(self, num_classes: int = NUM_CLASSES,
                  pretrained: bool = True, dropout: float = 0.3) -> None:
         super().__init__()
+        # use the stronger V2 ImageNet weights when pretrained
         weights = ResNet50_Weights.IMAGENET1K_V2 if pretrained else None
         self.backbone = models.resnet50(weights=weights)
         in_features = self.backbone.fc.in_features
-        self.backbone.fc = nn.Identity()   # drop ImageNet head
+        self.backbone.fc = nn.Identity() # drop ImageNet head
+        # new classifier head on top of backbone features
         self.head = nn.Sequential(
             nn.Linear(in_features, 512), nn.BatchNorm1d(512),
             nn.ReLU(inplace=True), nn.Dropout(p=dropout),
@@ -394,9 +434,11 @@ class MMACResNet50(nn.Module):
                 if m.bias is not None: nn.init.zeros_(m.bias)
 
     def forward(self, x):
+        # backbone features -> head logits
         return self.head(self.backbone(x))
 
     def parameter_groups(self, backbone_lr, head_lr, weight_decay):
+        # split LRs so the pretrained backbone trains slower than the new head
         return [
             {"params": list(self.backbone.parameters()), "lr": backbone_lr,
              "weight_decay": weight_decay, "name": "backbone"},
@@ -414,6 +456,7 @@ def warm_start_from_ckpt(model: nn.Module, ckpt_path: Path, *,
         return
     state = torch.load(p, map_location="cpu")["model_state"]
     if backbone_only:
+        # keep only backbone weights so a new head can be trained from scratch
         state = {k: v for k, v in state.items() if k.startswith("backbone.")}
     missing, unexpected = model.load_state_dict(state, strict=False)
     tag = "backbone" if backbone_only else "full"
@@ -423,36 +466,46 @@ def warm_start_from_ckpt(model: nn.Module, ckpt_path: Path, *,
 
 # amp + scheduler helpers
 def amp_scaler(use_amp: bool, device: torch.device):
+    # grad scaler only makes sense on cuda
     return torch.amp.GradScaler(device=device.type) if (use_amp and device.type == "cuda") else None
 
 def amp_ctx(use_amp: bool, device: torch.device):
+    # autocast context on cuda, no-op otherwise
     return torch.amp.autocast(device_type=device.type) if (use_amp and device.type == "cuda") else nullcontext()
 
 def build_cosine_with_warmup(optimizer: Optimizer, total_epochs: int, warmup_epochs: int):
+    # cosine decay for the post-warmup window
     base = CosineAnnealingLR(optimizer, T_max=max(1, total_epochs - warmup_epochs), eta_min=0.0)
     if warmup_epochs <= 0:
-        return base
+        return base # no warmup requested
+    # linear warmup from ~0 -> 1x LR
     warm = LambdaLR(optimizer, lr_lambda=lambda e: float(e + 1) / max(1, warmup_epochs))
+    # chain: warmup -> cosine at the milestone epoch
     return SequentialLR(optimizer, schedulers=[warm, base], milestones=[warmup_epochs])
 
 
-# plotting 
-def plot_confusion_matrix(cm, class_names, normalize=True, save_path=None,
-                          title="Confusion matrix"):
+# plotting
+def plot_confusion_matrix(cm, class_names, normalize=True, save_path=None, title="Confusion matrix"):
+    # confusion matrix as a heatmap
     cm = np.asarray(cm, dtype=np.float64)
     if normalize:
+        # divide each row by its total, safely if the row sums to zero
         row_sums = cm.sum(axis=1, keepdims=True)
         disp = np.divide(cm, row_sums, out=np.zeros_like(cm), where=row_sums > 0)
         fmt = ".2f"
     else:
-        disp, fmt = cm, ".0f"
+        disp, fmt = cm, ".0f" # raw counts
+
     fig, ax = plt.subplots(figsize=(6.5, 5.5))
     sns.heatmap(disp, annot=True, fmt=fmt, cmap="Blues",
                 xticklabels=class_names, yticklabels=class_names, cbar=True, ax=ax)
     ax.set_xlabel("Predicted grade"); ax.set_ylabel("True grade")
     ax.set_title(title + (" (row-normalised)" if normalize else ""))
+    
+    # angled x labels so long class names fit
     plt.setp(ax.get_xticklabels(), rotation=30, ha="right")
     fig.tight_layout()
+    
     if save_path is not None:
         Path(save_path).parent.mkdir(parents=True, exist_ok=True)
         fig.savefig(save_path, dpi=150, bbox_inches="tight")
