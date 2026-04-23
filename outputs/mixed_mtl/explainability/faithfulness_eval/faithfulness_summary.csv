@@ -1,0 +1,26 @@
+image_name,img_path,y_true,y_pred,target_class,original_target_prob,deletion_auc,insertion_auc,faithfulness_gap
+mmac_task_1_val_0071.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0071.png,1,0,0,0.6693048477172852,0.34150686860084534,0.39185577630996704,0.050348907709121704
+mmac_task_1_val_0240.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0240.png,3,3,3,0.9299300312995911,0.47721657156944275,0.8668982982635498,0.38968172669410706
+mmac_task_1_val_0172.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0172.png,0,0,0,0.6430429816246033,0.31568607687950134,0.4073357582092285,0.09164968132972717
+mmac_task_1_val_0244.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0244.png,4,4,4,0.7064862847328186,0.20334802567958832,0.8745822310447693,0.671234205365181
+mmac_task_1_val_0234.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0234.png,2,2,2,0.8361830115318298,0.12433381378650665,0.7115501165390015,0.5872163027524948
+mmac_task_1_val_0068.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0068.png,1,0,0,0.35033559799194336,0.16138483583927155,0.4112660586833954,0.24988122284412384
+mmac_task_1_val_0117.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0117.png,2,1,1,0.6271211504936218,0.1705840677022934,0.42594578862190247,0.25536172091960907
+mmac_task_1_val_0050.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0050.png,0,0,0,0.7053678035736084,0.36709287762641907,0.482111394405365,0.11501851677894592
+mmac_task_1_val_0035.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0035.png,4,4,4,0.7136654257774353,0.1710776835680008,0.8436267971992493,0.6725491136312485
+mmac_task_1_val_0102.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0102.png,1,1,1,0.733778178691864,0.04896583408117294,0.448086142539978,0.3991203084588051
+mmac_task_1_val_0134.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0134.png,0,0,0,0.5147182941436768,0.3814673125743866,0.4552781283855438,0.07381081581115723
+mmac_task_1_val_0003.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0003.png,2,2,2,0.8622835278511047,0.25621259212493896,0.7633939385414124,0.5071813464164734
+mmac_task_1_val_0242.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0242.png,3,3,3,0.9257920384407043,0.4688195586204529,0.9026679992675781,0.43384844064712524
+mmac_task_1_val_0173.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0173.png,0,0,0,0.4643082916736603,0.25845977663993835,0.40217095613479614,0.1437111794948578
+mmac_task_1_val_0125.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0125.png,0,0,0,0.4779500365257263,0.2212526500225067,0.4100494980812073,0.18879684805870056
+mmac_task_1_val_0247.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0247.png,4,4,4,0.931317150592804,0.28022119402885437,0.9451332092285156,0.6649120151996613
+mmac_task_1_val_0001.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0001.png,3,2,2,0.7808647155761719,0.20128397643566132,0.6036655902862549,0.40238161385059357
+mmac_task_1_val_0245.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0245.png,4,4,4,0.7876452803611755,0.20939292013645172,0.8769597411155701,0.6675668209791183
+mmac_task_1_val_0239.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0239.png,3,2,2,0.6875776052474976,0.13707318902015686,0.32189130783081055,0.1848181188106537
+mmac_task_1_val_0046.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0046.png,4,4,4,0.9897552132606506,0.5783828496932983,0.9299895763397217,0.35160672664642334
+mmac_task_1_val_0103.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0103.png,1,1,1,0.740382969379425,0.12562859058380127,0.3897591233253479,0.26413053274154663
+mmac_task_1_val_0148.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0148.png,2,2,2,0.8369795083999634,0.14494290947914124,0.4307246208190918,0.28578171133995056
+mmac_task_1_val_0008.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0008.png,2,2,2,0.9221687912940979,0.2264116257429123,0.7180867195129395,0.49167509377002716
+mmac_task_1_val_0213.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0213.png,3,3,3,0.6521239876747131,0.274796724319458,0.9123955965042114,0.6375988721847534
+mmac_task_1_val_0051.png,a:\Applied AI\group work\AppliedAIGroupProject\Testing\Testing_Images\mmac_task_1_val_0051.png,1,0,0,0.4229687750339508,0.20529483258724213,0.40731343626976013,0.202018603682518
