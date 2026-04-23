@@ -6,30 +6,30 @@
   "primary_metric": "quadratic_kappa",
   "val": {
     "accuracy": 0.8430232558139535,
-    "balanced_accuracy": 0.7598766776232793,
-    "macro_f1": 0.7618618871880495,
-    "weighted_f1": 0.840150161270337,
-    "quadratic_kappa": 0.9230310262529833,
-    "macro_auroc": 0.9556906318525925,
+    "balanced_accuracy": 0.7572730132066929,
+    "macro_f1": 0.7552405192336769,
+    "weighted_f1": 0.8407059301597253,
+    "quadratic_kappa": 0.9238987939171474,
+    "macro_auroc": 0.9555334291015443,
     "per_class_precision": [
-      0.873015873015873,
-      0.8360655737704918,
-      0.8787878787878788,
-      0.6153846153846154,
+      0.875,
+      0.85,
+      0.875,
+      0.5714285714285714,
       1.0
     ],
     "per_class_recall": [
-      0.9016393442622951,
+      0.9180327868852459,
       0.8225806451612904,
-      0.8529411764705882,
+      0.8235294117647058,
       0.8888888888888888,
       0.3333333333333333
     ],
     "per_class_f1": [
-      0.8870967741935484,
-      0.8292682926829268,
-      0.8656716417910447,
-      0.7272727272727273,
+      0.896,
+      0.8360655737704918,
+      0.8484848484848485,
+      0.6956521739130435,
       0.5
     ],
     "per_class_support": [
@@ -41,8 +41,8 @@
     ],
     "confusion_matrix": [
       [
-        55,
-        6,
+        56,
+        5,
         0,
         0,
         0
@@ -57,8 +57,8 @@
       [
         0,
         4,
-        29,
-        1,
+        28,
+        2,
         0
       ],
       [
@@ -83,7 +83,7 @@
     "macro_f1": 0.643002689315213,
     "weighted_f1": 0.7181535007951633,
     "quadratic_kappa": 0.7876447876447876,
-    "macro_auroc": 0.9193382623536784,
+    "macro_auroc": 0.9195138959774427,
     "per_class_precision": [
       0.8148148148148148,
       0.6,
@@ -154,7 +154,7 @@
     "seed": 42,
     "image_size": 224,
     "val_split": 0.15,
-    "num_workers": 0,
+    "num_workers": 8,
     "batch_size": 128,
     "train_fraction": 1.0,
     "augmentation": true,
@@ -172,8 +172,8 @@
     "use_amp": true,
     "early_stop_patience": 7,
     "primary_metric": "quadratic_kappa",
-    "checkpoint_dir": "a:\\Applied AI\\group work\\AppliedAIGroupProject\\checkpoints\\baseline",
-    "output_dir": "a:\\Applied AI\\group work\\AppliedAIGroupProject\\outputs\\baseline",
+    "checkpoint_dir": "/home/michal/GroupProjectAIMedIM/checkpoints/baseline",
+    "output_dir": "/home/michal/GroupProjectAIMedIM/outputs/baseline",
     "experiment_name": "baseline_resnet50"
   }
 }

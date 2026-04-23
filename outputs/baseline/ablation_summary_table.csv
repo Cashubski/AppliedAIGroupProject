@@ -1,2 +1,6 @@
 experiment,kappa,kappa_baseline,delta,ci_low,ci_high,p_value,significant_at_5pct
 "Baseline (224, aug on, 100 %)",0.7876,0.7876,0.0,,,,
+Image size 384,0.8401,0.7876,0.0525,0.0026,0.1083,0.031,True
+No augmentation,0.7948,0.7876,0.0071,-0.0315,0.0446,0.745,False
+Train 30 %,0.7377,0.7876,-0.0499,-0.1045,-0.0068,0.018,True
+Train 60 %,0.7814,0.7876,-0.0062,-0.0331,0.0221,0.644,False
